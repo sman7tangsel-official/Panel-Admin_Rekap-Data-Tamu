@@ -10,7 +10,7 @@
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
     body { font-family: 'Inter', sans-serif; }
     
-    /* Pengaturan Cetak / PDF */
+    /* Pengaturan Cetak PDF */
     @media print {
       body { background: white !important; padding: 0 !important; }
       #btnLogin, #statusAdmin, #cariTamu, #btnExportPdf, #btnExportExcel, .no-print { display: none !important; }
@@ -59,7 +59,7 @@
           <i class="fa-solid fa-list-check text-blue-600"></i> Daftar Kunjungan Tamu (Live Online)
         </h2>
         
-        <!-- FITUR CARI DAN TOMBOL EXPORT / PRINT -->
+        <!-- CARI & EXPORT -->
         <div class="flex flex-wrap items-center gap-2 w-full md:w-auto">
           <input type="text" id="cariTamu" onkeyup="filterTamu()" placeholder="Cari nama/instansi..." class="w-full md:w-48 px-3.5 py-2 border border-slate-300 rounded-xl text-xs focus:ring-2 focus:ring-blue-500 outline-none">
           
@@ -100,7 +100,7 @@
 
   </div>
 
-  <!-- MODAL POPUP LIHAT FOTO -->
+  <!-- MODAL FOTO -->
   <div id="modalFoto" class="fixed inset-0 bg-black/70 hidden items-center justify-center p-4 z-50 no-print">
     <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden p-4 space-y-3 relative">
       <div class="flex justify-between items-center border-b pb-2">
@@ -116,7 +116,7 @@
     </div>
   </div>
 
-  <!-- MODAL POPUP LOGIN PETUGAS -->
+  <!-- MODAL LOGIN -->
   <div id="modalLogin" class="fixed inset-0 bg-black/50 hidden items-center justify-center p-4 z-50 no-print">
     <div class="bg-white rounded-xl shadow-xl max-w-sm w-full p-6 space-y-4">
       <div class="flex justify-between items-center border-b pb-3">
