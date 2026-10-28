@@ -9,11 +9,19 @@
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
     body { font-family: 'Inter', sans-serif; }
+    
+    /* Pengaturan Cetak / PDF */
     @media print {
       body { background: white !important; padding: 0 !important; }
       #btnLogin, #statusAdmin, #cariTamu, #btnExportPdf, #btnExportExcel, .no-print { display: none !important; }
       .shadow-xl, .shadow-2xl, .shadow-lg { box-shadow: none !important; }
       .border { border: 1px solid #ddd !important; }
+      .print-img { display: block !important; max-height: 50px !important; margin: 0 auto; }
+      .screen-btn { display: none !important; }
+    }
+    
+    @media screen {
+      .print-img { display: none !important; }
     }
   </style>
 </head>
@@ -75,7 +83,7 @@
               <th class="p-3.5">Instansi</th>
               <th class="p-3.5">Tujuan</th>
               <th class="p-3.5">Keperluan</th>
-              <th class="p-3.5 text-center no-print">Foto Bukti</th>
+              <th class="p-3.5 text-center">Foto Bukti</th>
             </tr>
           </thead>
           <tbody id="tabelTamu">
@@ -141,16 +149,16 @@
     });
 
     function tampilkanDataTamu() {
-  fetch(URL_WEB_APP + "?v=" + new Date().getTime())
-    .then(res => res.json())
-    .then(data => {
-      globalDataTamu = data;
-      renderTabel(data);
-    })
-    .catch(err => {
-      console.error("Gagal mengambil data:", err);
-    });
-}
+      fetch(URL_WEB_APP + "?v=" + new Date().getTime())
+        .then(res => res.json())
+        .then(data => {
+          globalDataTamu = data;
+          renderTabel(data);
+        })
+        .catch(err => {
+          console.error("Gagal mengambil data:", err);
+        });
+    }
 
     function renderTabel(dataTamu) {
       const tbody = document.getElementById('tabelTamu');
@@ -167,6 +175,7 @@
 
       let html = '';
       dataTamu.forEach((item, index) => {
+        const adaFoto = item.foto && item.foto.length > 20;
         html += `
           <tr class="border-b hover:bg-slate-50 transition">
             <td class="p-3.5 text-slate-500 font-mono text-xs">${item.waktu || '-'}</td>
@@ -174,9 +183,10 @@
             <td class="p-3.5 text-slate-600 text-xs">${item.instansi || '-'}</td>
             <td class="p-3.5 text-slate-600 text-xs">${item.tujuan || '-'}</td>
             <td class="p-3.5 text-slate-600 text-xs">${item.keperluan || '-'}</td>
-            <td class="p-3.5 text-center no-print">
-              ${item.foto && item.foto.length > 20 
-                ? `<button type="button" onclick="lihatFotoModal(${index})" class="bg-blue-600 text-white px-3 py-1.5 rounded-lg text-xs font-semibold hover:bg-blue-700 inline-flex items-center gap-1 shadow-sm"><i class="fa-solid fa-image"></i> Lihat Foto</button>` 
+            <td class="p-3.5 text-center">
+              ${adaFoto 
+                ? `<button type="button" onclick="lihatFotoModal(${index})" class="screen-btn bg-blue-600 text-white px-3 py-1.5 rounded-lg text-xs font-semibold hover:bg-blue-700 inline-flex items-center gap-1 shadow-sm"><i class="fa-solid fa-image"></i> Lihat Foto</button>
+                   <img src="${item.foto}" class="print-img rounded border" alt="Foto Bukti">` 
                 : `<span class="text-slate-400 text-xs">-</span>`}
             </td>
           </tr>
