@@ -141,16 +141,16 @@
     });
 
     function tampilkanDataTamu() {
-      fetch(URL_WEB_APP)
-        .then(res => res.json())
-        .then(data => {
-          globalDataTamu = data;
-          renderTabel(data);
-        })
-        .catch(err => {
-          console.error("Gagal mengambil data:", err);
-        });
-    }
+  fetch(URL_WEB_APP + "?v=" + new Date().getTime())
+    .then(res => res.json())
+    .then(data => {
+      globalDataTamu = data;
+      renderTabel(data);
+    })
+    .catch(err => {
+      console.error("Gagal mengambil data:", err);
+    });
+}
 
     function renderTabel(dataTamu) {
       const tbody = document.getElementById('tabelTamu');
