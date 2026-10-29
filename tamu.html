@@ -168,16 +168,19 @@
 
     // Processing data dari Google Visualization API (Bebas CORS)
    // Format tanggal tangguh (Mencakup Objek Date, String, maupun Kolom Kosong)
+    // Format tanggal tangguh (Mencakup Objek Date, Teks Asli, & Sel Kosong)
     function formatTanggalGviz(val, formattedVal) {
-      // 1. Prioritaskan teks tampilan resmi dari Google Sheets
-      if (formattedVal && formattedVal.trim() !== '') return formattedVal;
-      
-      // 2. Jika bernilai teks biasa/string langsung
+      // 1. Jika Google Sheets memberikan teks tampilan resmi
+      if (formattedVal && String(formattedVal).trim() !== '') {
+        return formattedVal;
+      }
+
+      // 2. Jika ada teks/string manual di sel
       if (val && String(val).trim() !== '' && String(val).indexOf('Date(') === -1) {
         return String(val);
       }
-      
-      // 3. Jika berbentuk objek Date GViz, ubah ke format tanggal standar
+
+      // 3. Jika berbentuk objek Date dari GViz (Contoh: "Date(2026,9,28,18,17,37)")
       if (typeof val === 'string' && val.indexOf('Date(') !== -1) {
         const p = val.replace('Date(', '').replace(')', '').split(',');
         if (p.length >= 3) {
@@ -190,7 +193,17 @@
         }
       }
 
-      return '-';
+      // 4. Jika sel Kolom A di Google Sheets benar-benar KOSONG/NULL, otomatis isi Hari/Tanggal Saat Ini
+      const skr = new Date();
+      const hari = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'][skr.getDay()];
+      const bulan = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'][skr.getMonth()];
+      const tgl = String(skr.getDate()).padStart(2, '0');
+      const thn = skr.getFullYear();
+      const jam = String(skr.getHours()).padStart(2, '0');
+      const mnt = String(skr.getMinutes()).padStart(2, '0');
+      const det = String(skr.getSeconds()).padStart(2, '0');
+
+      return `${hari}, ${tgl} ${bulan} ${thn}, ${jam}.${mnt}.${det}`;
     }
 
     // Processing data dari Google Visualization API (Bebas CORS & Format Rapi)
