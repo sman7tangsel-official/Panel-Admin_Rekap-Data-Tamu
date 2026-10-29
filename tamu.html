@@ -167,12 +167,11 @@
     }
 
     // Processing data dari Google Visualization API (Bebas CORS)
-   // Format tanggal agar rapi (Contoh: "23 Okt 2026, 14:43")
+   // Format tanggal tangguh (Mencakup Objek Date, String, maupun Kolom Kosong)
     function formatTanggalGviz(val, formattedVal) {
-      if (formattedVal) return formattedVal;
-      if (!val) return '-';
+      if (formattedVal && formattedVal.trim() !== '') return formattedVal;
       
-      // Jika bernilai objek Date dari GViz
+      // Jika bernilai objek Date dari GViz (Contoh: "Date(2026,9,23,14,43,31)")
       if (typeof val === 'string' && val.indexOf('Date(') !== -1) {
         const p = val.replace('Date(', '').replace(')', '').split(',');
         if (p.length >= 3) {
@@ -184,7 +183,18 @@
           return `${d}/${m}/${y} ${hh}:${mm}`;
         }
       }
-      return val;
+
+      // Jika val ada isinya namun dalam format teks biasa
+      if (val && String(val).trim() !== '') return String(val);
+
+      // Jika di Google Sheets benar-benar kosong/null, tampilkan Hari & Tanggal Hari Ini
+      const skr = new Date();
+      const tgl = String(skr.getDate()).padStart(2, '0');
+      const bln = String(skr.getMonth() + 1).padStart(2, '0');
+      const thn = skr.getFullYear();
+      const jam = String(skr.getHours()).padStart(2, '0');
+      const mnt = String(skr.getMinutes()).padStart(2, '0');
+      return `${tgl}/${bln}/${thn} ${jam}:${mnt}`;
     }
 
     // Processing data dari Google Visualization API (Bebas CORS & Format Rapi)
