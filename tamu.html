@@ -152,7 +152,7 @@
       const oldScript = document.getElementById(scriptId);
       if (oldScript) oldScript.remove();
 
-      const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json;responseHandler:handleGvizData&_=` + new Date().getTime();
+      const url = "https://docs.google.com/spreadsheets/d/" + SHEET_ID + "/gviz/tq?tqx=out:json;responseHandler:handleGvizData&_=" + new Date().getTime();
 
       const script = document.createElement("script");
       script.id = scriptId;
