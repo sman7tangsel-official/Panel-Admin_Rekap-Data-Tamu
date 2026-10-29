@@ -139,9 +139,8 @@
     const PIN_ADMIN = "admin123";
     let globalDataTamu = [];
 
-    // Dua URL cadangan (URL Deployment Baru & URL Awal)
-    const URL_UTAMA = "https://script.google.com/macros/s/AKfycbwpelxVfTQ_FZJQxdC89X0qPnJY5s2Lcp_NK6zzCXxsXa9_Im3GnV6-LVM5bIkansRvow/exec";
-    const URL_CADANGAN = "https://script.google.com/macros/s/AKfycbbye2VdLLSKrBrbsp9CuaiMFaZoULmTedk7iuJlzqqEAby0oTDAVk9W2SDDGOjYqa_hZw/exec";
+    // MASUKKAN ID SPREADSHEET ANDA DI SINI
+    const SHEET_ID = "1j63-vFCG9X58RK4fAIvi-EHKi-UM7cJG0We_LcZQ91s";
 
     document.addEventListener("DOMContentLoaded", function() {
       tampilkanDataTamu();
@@ -149,44 +148,47 @@
     });
 
     function tampilkanDataTamu() {
-      // Coba ambil dari URL Utama
-      fetch(URL_UTAMA + "?v=" + new Date().getTime(), { redirect: "follow" })
-        .then(res => res.json())
-        .then(data => {
-          if (Array.isArray(data)) {
-            globalDataTamu = data;
-            renderTabel(data);
-          } else {
-            cobaUrlCadangan();
-          }
-        })
-        .catch(() => cobaUrlCadangan());
+      const scriptId = "gviz_script";
+      const oldScript = document.getElementById(scriptId);
+      if (oldScript) oldScript.remove();
+
+      const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json;responseHandler:handleGvizData&_=` + new Date().getTime();
+
+      const script = document.createElement("script");
+      script.id = scriptId;
+      script.src = url;
+      script.onerror = function() {
+        const tbody = document.getElementById('tabelTamu');
+        if (tbody && globalDataTamu.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-red-500 text-xs">Gagal menghubungkan ke server. Silakan muat ulang halaman.</td></tr>`;
+        }
+      };
+      document.body.appendChild(script);
     }
 
-    function cobaUrlCadangan() {
-      fetch(URL_CADANGAN + "?v=" + new Date().getTime(), { redirect: "follow" })
-        .then(res => res.json())
-        .then(data => {
-          if (Array.isArray(data)) {
-            globalDataTamu = data;
-            renderTabel(data);
-          } else {
-            tampilGagal();
-          }
-        })
-        .catch(() => tampilGagal());
-    }
+    // Processing data dari Google Visualization API (Bebas CORS)
+    function handleGvizData(response) {
+      if (!response || !response.table || !response.table.rows) return;
 
-    function tampilGagal() {
-      const tbody = document.getElementById('tabelTamu');
-      if (tbody && globalDataTamu.length === 0) {
-        tbody.innerHTML = `
-          <tr>
-            <td colspan="6" class="p-8 text-center text-red-500 text-xs">
-              Gagal menghubungkan ke server. Silakan muat ulang halaman.
-            </td>
-          </tr>`;
-      }
+      const rows = response.table.rows;
+      const dataParsed = [];
+
+      rows.forEach(row => {
+        const c = row.c;
+        if (c) {
+          dataParsed.push({
+            waktu: c[0] ? c[0].v || '' : '',
+            nama: c[1] ? c[1].v || '' : '',
+            instansi: c[2] ? c[2].v || '' : '',
+            tujuan: c[3] ? c[3].v || '' : '',
+            keperluan: c[4] ? c[4].v || '' : '',
+            foto: c[5] ? c[5].v || '' : ''
+          });
+        }
+      });
+
+      globalDataTamu = dataParsed;
+      renderTabel(dataParsed);
     }
 
     function renderTabel(dataTamu) {
