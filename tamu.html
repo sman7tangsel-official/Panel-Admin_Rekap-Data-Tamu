@@ -141,19 +141,22 @@
     const PIN_ADMIN = "admin123";
     let globalDataTamu = [];
 
-    // Fungsi Pembacaan Data Utama via JSONP / Fetch Fallback
+    // URL Web App Aktif Terbaru
+    const URL_WEB_APP = "https://script.google.com/macros/s/AKfycbwpelxVfTQ_FZJQxdC89X0qPnJY5s2Lcp_NK6zzCXxsXa9_Im3GnV6-LVM5bIkansRvow/exec";
+
+    // Fungsi Utama Pembaca Data
     function tampilkanDataTamu() {
       const scriptId = "jsonp_google_script";
       const oldScript = document.getElementById(scriptId);
       if (oldScript) oldScript.remove();
 
-      const URL_WEB_APP = "https://script.google.com/macros/s/AKfycbwpelxVfTQ_FZJQxdC89X0qPnJY5s2Lcp_NK6zzCXxsXa9_Im3GnV6-LVM5bIkansRvow/exec";
       const targetUrl = URL_WEB_APP + "?callback=handleResponseData&v=" + new Date().getTime();
 
       const script = document.createElement("script");
       script.id = scriptId;
       script.src = targetUrl;
       script.onerror = function() {
+        // Fallback jika JSONP terhalang
         fetch(URL_WEB_APP + "?v=" + new Date().getTime())
           .then(res => res.json())
           .then(data => handleResponseData(data))
@@ -166,21 +169,8 @@
       };
       document.body.appendChild(script);
     }
-        // Fallback langsung menggunakan Fetch standar jika script tag diblokir
-        fetch("https://script.google.com/macros/s/AKfycbbye2VdLLSKrBrbsp9CuaiMFaZoULmTedk7iuJlzqqEAby0oTDAVk9W2SDDGOjYqa_hZw/exec?v=" + new Date().getTime())
-          .then(res => res.json())
-          .then(data => handleResponseData(data))
-          .catch(() => {
-            const tbody = document.getElementById('tabelTamu');
-            if (tbody) {
-              tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-red-500 text-xs">Gagal menghubungkan ke server. Silakan muat ulang halaman.</td></tr>`;
-            }
-          });
-      };
-      document.body.appendChild(script);
-    }
 
-    // Handler penerima data sukses
+    // Penerima data JSONP
     function handleResponseData(data) {
       if (Array.isArray(data)) {
         globalDataTamu = data;
