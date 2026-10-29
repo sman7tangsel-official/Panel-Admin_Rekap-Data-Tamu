@@ -169,9 +169,15 @@
     // Processing data dari Google Visualization API (Bebas CORS)
    // Format tanggal tangguh (Mencakup Objek Date, String, maupun Kolom Kosong)
     function formatTanggalGviz(val, formattedVal) {
+      // 1. Prioritaskan teks tampilan resmi dari Google Sheets
       if (formattedVal && formattedVal.trim() !== '') return formattedVal;
       
-      // Jika bernilai objek Date dari GViz (Contoh: "Date(2026,9,23,14,43,31)")
+      // 2. Jika bernilai teks biasa/string langsung
+      if (val && String(val).trim() !== '' && String(val).indexOf('Date(') === -1) {
+        return String(val);
+      }
+      
+      // 3. Jika berbentuk objek Date GViz, ubah ke format tanggal standar
       if (typeof val === 'string' && val.indexOf('Date(') !== -1) {
         const p = val.replace('Date(', '').replace(')', '').split(',');
         if (p.length >= 3) {
@@ -180,21 +186,11 @@
           const d = String(p[2]).padStart(2, '0');
           const hh = p[3] ? String(p[3]).padStart(2, '0') : '00';
           const mm = p[4] ? String(p[4]).padStart(2, '0') : '00';
-          return `${d}/${m}/${y} ${hh}:${mm}`;
+          return `${d}/${m}/${y}, ${hh}.${mm}`;
         }
       }
 
-      // Jika val ada isinya namun dalam format teks biasa
-      if (val && String(val).trim() !== '') return String(val);
-
-      // Jika di Google Sheets benar-benar kosong/null, tampilkan Hari & Tanggal Hari Ini
-      const skr = new Date();
-      const tgl = String(skr.getDate()).padStart(2, '0');
-      const bln = String(skr.getMonth() + 1).padStart(2, '0');
-      const thn = skr.getFullYear();
-      const jam = String(skr.getHours()).padStart(2, '0');
-      const mnt = String(skr.getMinutes()).padStart(2, '0');
-      return `${tgl}/${bln}/${thn} ${jam}:${mnt}`;
+      return '-';
     }
 
     // Processing data dari Google Visualization API (Bebas CORS & Format Rapi)
