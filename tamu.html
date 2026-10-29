@@ -140,7 +140,11 @@
   <script>
     const PIN_ADMIN = "admin123";
     
-    const URL_WEB_APP = "https://script.google.com/macros/s/AKfycbbye2VdLLSKrBrbsp9CuaiMFaZoULmTedk7iuJlzqqEAby0oTDAVk9W2SDDGOjYqa_hZw/exec";
+    // String URL murni
+    const RAW_URL = "https://script.google.com/macros/s/AKfycbbye2VdLLSKrBrbsp9CuaiMFaZoULmTedk7iuJlzqqEAby0oTDAVk9W2SDDGOjYqa_hZw/exec";
+    
+    // Menghapus otomatis semua spasi tersembunyi
+    const URL_WEB_APP = RAW_URL.replace(/\s+/g, '');
 
     let globalDataTamu = [];
 
