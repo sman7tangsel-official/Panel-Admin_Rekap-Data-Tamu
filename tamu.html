@@ -167,6 +167,27 @@
     }
 
     // Processing data dari Google Visualization API (Bebas CORS)
+   // Format tanggal agar rapi (Contoh: "23 Okt 2026, 14:43")
+    function formatTanggalGviz(val, formattedVal) {
+      if (formattedVal) return formattedVal;
+      if (!val) return '-';
+      
+      // Jika bernilai objek Date dari GViz
+      if (typeof val === 'string' && val.indexOf('Date(') !== -1) {
+        const p = val.replace('Date(', '').replace(')', '').split(',');
+        if (p.length >= 3) {
+          const y = p[0];
+          const m = String(parseInt(p[1]) + 1).padStart(2, '0');
+          const d = String(p[2]).padStart(2, '0');
+          const hh = p[3] ? String(p[3]).padStart(2, '0') : '00';
+          const mm = p[4] ? String(p[4]).padStart(2, '0') : '00';
+          return `${d}/${m}/${y} ${hh}:${mm}`;
+        }
+      }
+      return val;
+    }
+
+    // Processing data dari Google Visualization API (Bebas CORS & Format Rapi)
     function handleGvizData(response) {
       if (!response || !response.table || !response.table.rows) return;
 
@@ -176,13 +197,14 @@
       rows.forEach(row => {
         const c = row.c;
         if (c) {
+          const waktuRaw = c[0] ? (c[0].f || c[0].v || '') : '';
           dataParsed.push({
-            waktu: c[0] ? c[0].v || '' : '',
-            nama: c[1] ? c[1].v || '' : '',
-            instansi: c[2] ? c[2].v || '' : '',
-            tujuan: c[3] ? c[3].v || '' : '',
-            keperluan: c[4] ? c[4].v || '' : '',
-            foto: c[5] ? c[5].v || '' : ''
+            waktu: formatTanggalGviz(c[0] ? c[0].v : '', c[0] ? c[0].f : ''),
+            nama: c[1] ? (c[1].v || '') : '',
+            instansi: c[2] ? (c[2].v || '') : '',
+            tujuan: c[3] ? (c[3].v || '') : '',
+            keperluan: c[4] ? (c[4].v || '') : '',
+            foto: c[5] ? (c[5].v || '') : ''
           });
         }
       });
