@@ -138,7 +138,11 @@
   </div>
 
   <script>
-    const URL_WEB_APP = "https://script.google.com/macros/s/AKfycbbye2VdLLSKrBrbsp9CuaiMFaZoULmTedk7iuJlzqqEAby0oTDAVk9W2SDDGOjYqa_hZw/exec";
+    const PIN_ADMIN = "admin123";
+    
+    // Otomatis menghapus seluruh karakter spasi jika ada
+    const RAW_URL = "https://script.google.com/macros/s/AKfycbbye2VdLLSKrBrbsp9CuaiMFaZoULmTedk7iuJlzqqEAby0oTDAVk9W2SDDGOjYqa_hZw/exec";
+    const URL_WEB_APP = RAW_URL.replace(/\s+/g, '');
 
     let globalDataTamu = [];
 
@@ -156,6 +160,15 @@
         })
         .catch(err => {
           console.error("Gagal mengambil data:", err);
+          const tbody = document.getElementById('tabelTamu');
+          if (tbody) {
+            tbody.innerHTML = `
+              <tr>
+                <td colspan="6" class="p-8 text-center text-red-500 text-xs">
+                  Gagal menghubungkan ke server. Silakan muat ulang halaman.
+                </td>
+              </tr>`;
+          }
         });
     }
 
