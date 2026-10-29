@@ -138,13 +138,8 @@
   <script>
     const PIN_ADMIN = "admin123";
     
-    // Penyambungan URL otomatis anti-spasi & anti-break
-    const URL_PARTS = [
-      "https://script.google.com/macros/s/",
-      "AKfycbbye2VdLLSKrBrbsp9CuaiMFaZoULmTedk7iuJlzqqEAby0oTDAVk9W2SDDGOjYqa",
-      "_hZw/exec"
-    ];
-    const URL_WEB_APP = URL_PARTS.join('').replace(/\s+/g, '');
+    const B64_URL = "aHR0cHM6Ly9zY3JpcHQuZ29vZ2xlLmNvbS9tYWNyb3Mvcy9BS2Z5Y2JieWUyVmRMTFNLckJyc3A5Q3VhaU1GYVpvVUxtVGVkazdpdUpsenFxRUFieTBvVERBVms5VzJTRERHT2pZYXFfaFp3L2V4ZWM=";
+    const URL_WEB_APP = atob(B64_URL);
 
     let globalDataTamu = [];
 
